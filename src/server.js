@@ -24,22 +24,27 @@ import http from 'node:http';
 const users = []
 
 const server = http.createServer(async (req, res) => {
-    const { method, url } = req; // destructuring = permite desempacotar 
-    // valores de arrays para evitar repetiçoes desnecessárias como por exemplo: req.method, req.url
-        const buffers = []
-    for await (const chunk of req) {
-        // for await -> allows us to iterate over the chunks of data that are being sent to the server
-        buffers.push(chunk)
-        // buffers -> array that will store the chunks of data that are being sent to the server
-}
+    const { method, url } = req
 
-    try {
-        req.body = JSON.parse(Buffer.concat(buffers).toString())
-    }   catch {
-        req.body = null
+    await json(req, res, async)
+
+    let body = {}
+
+    if (method === 'POST') {
+        let rawBody = ''
+
+        for await (const chunk of req) {
+            rawBody += chunk
+        }
+
+        if (rawBody) {
+            try {
+                body = JSON.parse(rawBody)
+            } catch {
+                return res.writeHead(400).end()
+            }
+        }
     }
-
-        console.log(body.name)
 
     if (method === 'GET' && url === '/users') {
         return res
@@ -48,7 +53,7 @@ const server = http.createServer(async (req, res) => {
         // retorna uma resposta para o http, já que res.end() espera uma string, então é necessário converter o array de objetos para string
     }
     if (method === 'POST' && url === '/users') {
-        const { name, email} = req.body
+        const { name, email } = body
 
         users.push({
             id: 1,
