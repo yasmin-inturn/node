@@ -1,5 +1,5 @@
 import http from 'node:http';
-
+import { json } from './middlewares/json.js';
 // - diferentes requisições
 
 // - HTTP
@@ -48,7 +48,6 @@ const server = http.createServer(async (req, res) => {
 
     if (method === 'GET' && url === '/users') {
         return res
-        .setHeader('Content-Type', 'application/json') // define o tipo de conteúdo da resposta como JSON
         .end(JSON.stringify(users)) 
         // retorna uma resposta para o http, já que res.end() espera uma string, então é necessário converter o array de objetos para string
     }
